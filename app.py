@@ -51,7 +51,7 @@ st.markdown(
 st.divider()
 
 # ==============================================================================
-# 2. LOGICA DE CARGA Y GESTIÓN DE DATOS (Mantenida optimizada con Cache)
+# 2. LOGICA DE CARGA Y GESTIÓN DE DATOS (Envoltorio seguro Try-Except)
 # ==============================================================================
 @st.cache_data
 def load_dataset(path: str) -> pd.DataFrame:
@@ -61,20 +61,51 @@ def load_dataset(path: str) -> pd.DataFrame:
 # Ruta del dataset local por defecto
 DEFAULT_DATASET = os.path.join("archive", "material.csv")
 
-# Barra lateral para el control de carga de archivos por parte del usuario
+# ------------------------------------------------------------------------------
+# BARRA LATERAL: 0. LOGOTIPOS DE IDENTIDAD TECNOLÓGICA (NUEVA MEJORA VISUAL)
+# ------------------------------------------------------------------------------
+st.sidebar.markdown("### 🛠️ Tecnologías del Proyecto")
+# Creamos dos columnas dentro de la barra lateral para los logos
+col_logo1, col_logo2 = st.sidebar.columns(2)
+
+with col_logo1:
+    # Logotipo oficial de Python
+    st.image(
+        "https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg", 
+        width=65
+    )
+
+with col_logo2:
+    # Logotipo oficial de Streamlit
+    st.image(
+        "https://streamlit.io/images/brand/streamlit-mark-color.png", 
+        width=65
+    )
+st.sidebar.divider() # Línea de separación estética interna
+
+# Controles de carga de archivos debajo de las insignias
 st.sidebar.markdown("### 📁 Configuración de Datos")
 uploaded_file = st.sidebar.file_uploader("Cargar un dataset CSV", type=["csv"])
 
-# Control de flujo para la asignación del DataFrame analítico
-if uploaded_file is not None:
-    df = pd.read_csv(uploaded_file)
-    source_label = uploaded_file.name
-else:
-    df = load_dataset(DEFAULT_DATASET)
-    source_label = DEFAULT_DATASET
+# Control de flujo seguro para la asignación del DataFrame analítico
+try:
+    if uploaded_file is not None:
+        df = pd.read_csv(uploaded_file)
+        source_label = uploaded_file.name
+    else:
+        df = load_dataset(DEFAULT_DATASET)
+        source_label = DEFAULT_DATASET
+        
+    st.sidebar.success(f"Activo: {source_label}")
 
-# Feedback visual en la barra lateral indicando el archivo en ejecución
-st.sidebar.success(f"Activo: {source_label}")
+except FileNotFoundError:
+    st.error("⚠️ **Archivo de respaldo no detectado:** No se encontró el archivo `archive/material.csv` en el repositorio.")
+    st.info("💡 **Solución:** Sube tu propio archivo CSV desde la barra lateral izquierda para activar las funciones.")
+    st.stop()
+
+except Exception as e:
+    st.error(f"⚠️ Ocurrió un error inesperado al leer los datos: {e}")
+    st.stop()
 
 # ==============================================================================
 # 3. SISTEMA DE NAVEGACIÓN POR PESTAÑAS HORIZONTALES (UI Elegante)
@@ -86,13 +117,9 @@ tab1, tab2, tab3, tab4 = st.tabs([
     "🧠 Interpretación"
 ])
 
-# ------------------------------------------------------------------------------
-# PESTAÑA 1: EXPLORACIÓN INICIAL DE DATOS
-# ------------------------------------------------------------------------------
+# ---- PESTAÑA 1: EXPLORACIÓN INICIAL DE DATOS ----
 with tab1:
     st.markdown("### Resumen Ejecutivo de las Dimensiones")
-    
-    # Tarjetas de Métricas (Mapeo de dimensiones del dataset)
     col1, col2, col3 = st.columns(3)
     col1.metric("Filas Totales", f"{df.shape[0]:,}")
     col2.metric("Columnas", df.shape[1])
@@ -104,7 +131,6 @@ with tab1:
     
     st.markdown("---")
     st.markdown("#### Tipos de Datos y Completitud de Columnas")
-    # Construcción de la tabla de metadatos del DataFrame
     info = pd.DataFrame({
         "Columna": df.columns,
         "Tipo de Dato": df.dtypes.astype(str).values,
@@ -115,16 +141,13 @@ with tab1:
     
     st.markdown("---")
     st.markdown("#### Resumen Estadístico Descriptivo")
-    # Extracción automática de columnas numéricas para el análisis estadístico
     numeric_cols = df.select_dtypes(include="number").columns.tolist()
     if numeric_cols:
         st.dataframe(df[numeric_cols].describe().T, use_container_width=True)
     else:
         st.info("No hay columnas numéricas disponibles para resumir.")
 
-# ------------------------------------------------------------------------------
-# PESTAÑA 2: ANÁLISIS DE VARIABLES (Frecuencias e Histogramas)
-# ------------------------------------------------------------------------------
+# ---- PESTAÑA 2: ANÁLISIS DE VARIABLES (Frecuencias con Plotly) ----
 with tab2:
     st.markdown("### Análisis de Distribución de Frecuencias")
     left, right = st.columns(2)
@@ -133,11 +156,9 @@ with tab2:
         st.markdown("#### Distribución de Variable Seleccionada")
         selected_col = st.selectbox("Selecciona una variable para visualizar", df.columns.tolist(), key="var_select")
         
-        # Procesamiento de conteos para Plotly Express
         counts_selected = df[selected_col].value_counts().head(10).reset_index()
         counts_selected.columns = [selected_col, 'Frecuencia']
         
-        # Creación del gráfico interactivo utilizando la paleta Azul Marino
         fig_selected = px.bar(
             counts_selected, x=selected_col, y='Frecuencia',
             color_discrete_sequence=['#1E3A8A'], template='plotly_white'
@@ -146,13 +167,11 @@ with tab2:
         st.plotly_chart(fig_selected, use_container_width=True)
         
     with right:
-        # Validación condicional de la presencia de la variable 'Use'
         if "Use" in df.columns:
             st.markdown("#### Distribución de la Variable Objetivo ('Use')")
             counts_use = df["Use"].value_counts().reset_index()
             counts_use.columns = ['Use', 'Frecuencia']
             
-            # Creación del gráfico de barras utilizando la paleta Gris Corporativo
             fig_use = px.bar(
                 counts_use, x='Use', y='Frecuencia',
                 color_discrete_sequence=['#475569'], template='plotly_white'
@@ -162,9 +181,7 @@ with tab2:
         else:
             st.info("La columna objetivo 'Use' no está presente en el dataset actual.")
 
-# ------------------------------------------------------------------------------
-# PESTAÑA 3: VISUALIZACIONES CLAVE (Correlación y Tendencias)
-# ------------------------------------------------------------------------------
+# ---- PESTAÑA 3: VISUALIZACIONES CLAVE (Líneas con Plotly) ----
 with tab3:
     st.markdown("### Análisis de Correlaciones y Tendencias Temporales")
     if numeric_cols:
@@ -176,10 +193,8 @@ with tab3:
         st.markdown("#### Comparación Rápida de Tendencias Continuas")
         feature = st.selectbox("Variable para comparar en el tiempo", numeric_cols, key="feature_compare")
         
-        # Estructuración de datos para gráfico lineal continuo
         line_data = df[feature].astype(float).reset_index()
         
-        # Gráfico interactivo lineal en color Azul Marino
         fig_line = px.line(
             line_data, x='index', y=feature,
             color_discrete_sequence=['#1E3A8A'], template='plotly_white'
@@ -189,13 +204,10 @@ with tab3:
     else:
         st.info("Se requieren variables numéricas para generar análisis analítico avanzado.")
 
-# ------------------------------------------------------------------------------
-# PESTAÑA 4: INTERPRETACIÓN Y CONCLUSIONES
-# ------------------------------------------------------------------------------
+# ---- PESTAÑA 4: INTERPRETACIÓN Y CONCLUSIONES ----
 with tab4:
     st.markdown("### Conclusiones de Negocio y Modelado")
     if "Use" in df.columns:
-        # Cálculo de las proporciones exactas de la variable objetivo
         use_counts = df["Use"].value_counts(normalize=True).mul(100).round(1)
         st.markdown("#### Proporción Estimada por Clase (Porcentaje):")
         st.json(use_counts.to_dict())
