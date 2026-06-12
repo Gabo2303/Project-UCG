@@ -1,2 +1,2 @@
 # Project-UCG
-Proyecto relacionado a la industria del acero
+Proyecto Final de Universidad Casa Grande
