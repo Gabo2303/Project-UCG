@@ -110,11 +110,11 @@ except Exception as e:
 # ==============================================================================
 # 3. SISTEMA DE NAVEGACIÓN POR PESTAÑAS HORIZONTALES (UI Elegante)
 # ==============================================================================
-tab1, tab2, tab3, tab4 = st.tabs([
+tab1, tab2, tab3 = st.tabs([
     "📊 Exploración Inicial", 
     "📈 Análisis de Variables", 
     "🔍 Visualizaciones Clave", 
-    "🧠 Interpretación"
+    
 ])
 
 # ---- PESTAÑA 1: EXPLORACIÓN INICIAL DE DATOS ----
@@ -203,16 +203,6 @@ with tab3:
         st.plotly_chart(fig_line, use_container_width=True)
     else:
         st.info("Se requieren variables numéricas para generar análisis analítico avanzado.")
-
-# ---- PESTAÑA 4: INTERPRETACIÓN Y CONCLUSIONES ----
-with tab4:
-    st.markdown("### Conclusiones de Negocio y Modelado")
-    if "Use" in df.columns:
-        use_counts = df["Use"].value_counts(normalize=True).mul(100).round(1)
-        st.markdown("#### Proporción Estimada por Clase (Porcentaje):")
-        st.json(use_counts.to_dict())
-    else:
-        st.info("Cargue un dataset que contenga la variable objetivo 'Use' para visualizar su interpretación.")
 
 # Pie de página institucional homologado
 st.markdown("---")
