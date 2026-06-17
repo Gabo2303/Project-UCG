@@ -1,5 +1,5 @@
 # Project-UCG
-Proyecto Final de Universidad Casa Grande
+Proyecto Final
 
 # Plataforma Web Interactiva para Análisis Exploratorio de Datos (EDA)
 [![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org)
@@ -7,14 +7,14 @@ Proyecto Final de Universidad Casa Grande
 [![Plotly](https://img.shields.io/badge/Plotly-Express-3F4F75.svg)](https://plotly.com)
 [![UCG](https://img.shields.io/badge/UCG-Proyecto%20Final-003366.svg)](#)
 
-Este repositorio contiene el código fuente y la arquitectura lógica de la **Plataforma Web Interactiva para la Carga, Exploración, Análisis y Visualización Automatizada de Datos Estructurados**. Este proyecto ha sido desarrollado como el entregable integrador final aplicando los conocimientos de Ciencia de Datos bajo las directrices académicas de la **Universidad de Ciencias de la Gestión (UCG)**.
+Este repositorio contiene el código fuente y la arquitectura lógica de la **Plataforma Web Interactiva para la Carga, Exploración, Análisis y Visualización Automatizada de Datos Estructurados**. Este proyecto ha sido desarrollado como el entregable integrador final aplicando los conocimientos de Ciencia de Datos bajo las directrices académicas.
 
 La aplicación automatiza de forma centralizada las tareas críticas de un Análisis Exploratorio de Datos (EDA), transformando scripts tradicionales en un entorno interactivo basado en la nube para auditar la calidad, completitud y comportamiento estadístico de cualquier dataset en formato CSV.
 ---
 ## 🚀 Enlaces de Acceso Obligatorios
 
-* **Aplicación en Producción (Streamlit Cloud):** [Acceder a la Plataforma Web](https://tu-app-url.streamlit.app) *(Sustituir con tu enlace real)*
-* **Código Fuente (Repositorio GitHub):** [Ver Repositorio de Código](https://github.com/tu-usuario/tu-repositorio) *(Sustituir con tu enlace real)*
+* **Aplicación en Producción (Streamlit Cloud):** [Acceder a la Plataforma Web] (https://gabriel-arellanoucs.streamlit.app/) 
+* **Código Fuente (Repositorio GitHub):** [Ver Repositorio de Código] (https://github.com/Gabo2303/Project-UCG.git)
 
 ---
 
